@@ -47,7 +47,11 @@ export class ProjectsService {
   }
 
   async findOne({ id }: GetIdProjectDto): Promise<Project> {
-    const project = await this.projectRepository.findOne({ where: { id } });
+    const project = await this.projectRepository.findOne({
+      where: { id },
+
+      relations: { tasks: true },
+    });
     if (!project) {
       throw new NotFoundException('پروژه ای با این آیدی یافت نشد');
     }
