@@ -27,7 +27,7 @@ export class GetProjectQueryDto {
   limit: number = 10;
 }
 
-export class GetOneProjectDto {
+export class GetIdProjectDto {
   @IsOptional()
   @Type(() => Number)
   @IsNumber({}, { message: 'شماره پروژه باید عدد باشد' })
