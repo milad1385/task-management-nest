@@ -4,6 +4,7 @@ import { UpdateProjectDto } from './dto/update-project.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Project } from './entities/project.entity';
 import { Repository } from 'typeorm';
+import { GetProjectQueryDto } from './dto/get-projects.dto';
 
 @Injectable()
 export class ProjectsService {
@@ -11,7 +12,7 @@ export class ProjectsService {
     @InjectRepository(Project)
     private readonly projectRepository: Repository<Project>,
   ) {}
-  async create(createProjectDto: CreateProjectDto) {
+  async create(createProjectDto: CreateProjectDto): Promise<Project> {
     try {
       const newProject = this.projectRepository.create(createProjectDto);
       return await this.projectRepository.save(newProject);
@@ -20,8 +21,22 @@ export class ProjectsService {
     }
   }
 
-  findAll() {
-    return `This action returns all projects`;
+  async findAll({
+    page,
+    limit,
+  }: GetProjectQueryDto): Promise<{ projects: Project[]; count: number }> {
+    try {
+      const [projects, count] = await this.projectRepository.findAndCount({
+        skip: (page - 1) * limit,
+        take: limit,
+      });
+
+      return { projects, count };
+    } catch (error) {
+      throw new BadRequestException(
+        'در هنگام دریافت پروژه ها مشکلی به وجود آمد.',
+      );
+    }
   }
 
   findOne(id: number) {
