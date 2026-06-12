@@ -14,7 +14,7 @@ import { ProjectsService } from './projects.service';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import type { Response } from 'express';
-import { GetOneProjectDto, GetProjectQueryDto } from './dto/get-projects.dto';
+import { GetIdProjectDto, GetProjectQueryDto } from './dto/get-projects.dto';
 import { createPagination } from 'src/utils/func';
 
 @Controller('projects')
@@ -52,7 +52,7 @@ export class ProjectsController {
   }
 
   @Get(':id')
-  async findOne(@Res() res: Response, @Param() param: GetOneProjectDto) {
+  async findOne(@Res() res: Response, @Param() param: GetIdProjectDto) {
     const { id } = param;
     const project = await this.projectsService.findOne({ id });
     return res.status(HttpStatus.OK).json({
@@ -68,7 +68,13 @@ export class ProjectsController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.projectsService.remove(+id);
+  async remove(@Res() res: Response, @Param() param: GetIdProjectDto) {
+    const { id } = param;
+    const deletedProject = await this.projectsService.remove({ id });
+    return res.status(HttpStatus.OK).json({
+      statusCode: HttpStatus.OK,
+      message: 'پروژه با موفقیت حذف شد',
+      data: deletedProject,
+    });
   }
 }
