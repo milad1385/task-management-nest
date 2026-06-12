@@ -8,11 +8,14 @@ import {
   Delete,
   Res,
   HttpStatus,
+  Query,
 } from '@nestjs/common';
 import { ProjectsService } from './projects.service';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
-import type { Response } from 'express'; 
+import type { Response } from 'express';
+import { GetProjectQueryDto } from './dto/get-projects.dto';
+import { createPagination } from 'src/utils/func';
 
 @Controller('projects')
 export class ProjectsController {
@@ -32,8 +35,20 @@ export class ProjectsController {
   }
 
   @Get()
-  findAll() {
-    return this.projectsService.findAll();
+  async findAll(@Res() res: Response, @Query() queryDto: GetProjectQueryDto) {
+    const { page, limit } = queryDto;
+    const { projects, count } = await this.projectsService.findAll({
+      page,
+      limit,
+    });
+    return res.status(HttpStatus.OK).json({
+      statusCode: HttpStatus.OK,
+      message: 'پروژه ها با موفقیت ثبت شد',
+      data: {
+        projects,
+        pagination: createPagination(page, limit, count, 'Projects'),
+      },
+    });
   }
 
   @Get(':id')
