@@ -14,7 +14,7 @@ import { ProjectsService } from './projects.service';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import type { Response } from 'express';
-import { GetProjectQueryDto } from './dto/get-projects.dto';
+import { GetOneProjectDto, GetProjectQueryDto } from './dto/get-projects.dto';
 import { createPagination } from 'src/utils/func';
 
 @Controller('projects')
@@ -52,8 +52,14 @@ export class ProjectsController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.projectsService.findOne(+id);
+  async findOne(@Res() res: Response, @Param() param: GetOneProjectDto) {
+    const { id } = param;
+    const project = await this.projectsService.findOne({ id });
+    return res.status(HttpStatus.OK).json({
+      statusCode: HttpStatus.OK,
+      message: 'پروژه با موفقیت دریافت شد',
+      data: project,
+    });
   }
 
   @Patch(':id')
