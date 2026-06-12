@@ -1,5 +1,12 @@
 import { Type } from 'class-transformer';
-import { IsInt, IsNumber, IsOptional, IsPositive, Max, Min } from 'class-validator';
+import {
+  IsInt,
+  IsNumber,
+  IsOptional,
+  IsPositive,
+  Max,
+  Min,
+} from 'class-validator';
 
 export class GetProjectQueryDto {
   @IsOptional()
@@ -18,4 +25,13 @@ export class GetProjectQueryDto {
   @Min(1, { message: 'حداقل تعداد آیتم در هر صفحه 1 است' })
   @Max(100, { message: 'حداکثر تعداد آیتم در هر صفحه 100 است' })
   limit: number = 10;
+}
+
+export class GetOneProjectDto {
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber({}, { message: 'شماره پروژه باید عدد باشد' })
+  @IsPositive({ message: 'شماره پروژه باید بزرگتر از 0 باشد' })
+  @IsInt({ message: 'شماره صفحه باید عدد صحیح باشد' })
+  id: number;
 }
