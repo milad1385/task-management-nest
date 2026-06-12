@@ -9,6 +9,7 @@ import {
   Res,
   HttpStatus,
   Query,
+  Put,
 } from '@nestjs/common';
 import { ProjectsService } from './projects.service';
 import { CreateProjectDto } from './dto/create-project.dto';
@@ -62,9 +63,22 @@ export class ProjectsController {
     });
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateProjectDto: UpdateProjectDto) {
-    return this.projectsService.update(+id, updateProjectDto);
+  @Put(':id')
+  async update(
+    @Res() res: Response,
+    @Param() param: GetIdProjectDto,
+    @Body() updateProjectDto: UpdateProjectDto,
+  ) {
+    const { id } = param;
+    const updatedProject = await this.projectsService.update(
+      id,
+      updateProjectDto,
+    );
+    return res.status(HttpStatus.OK).json({
+      statusCode: HttpStatus.OK,
+      message: 'پروژه با موفقیت آپدیت شد',
+      data: updatedProject,
+    });
   }
 
   @Delete(':id')
