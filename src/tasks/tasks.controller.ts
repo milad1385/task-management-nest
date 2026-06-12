@@ -8,11 +8,14 @@ import {
   Delete,
   HttpStatus,
   Res,
+  Query,
 } from '@nestjs/common';
 import { TasksService } from './tasks.service';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import type { Response } from 'express';
+import { GetTaskStatusDto } from './dto/get-task.dto';
+import { createPagination } from 'src/utils/func';
 
 @Controller('tasks')
 export class TasksController {
@@ -29,8 +32,17 @@ export class TasksController {
   }
 
   @Get()
-  findAll() {
-    return this.tasksService.findAll();
+  async findAll(@Res() res: Response, @Query() queryDto: GetTaskStatusDto) {
+    const { page, limit } = queryDto;
+    const { tasks, count } = await this.tasksService.findAll(queryDto);
+    return res.status(HttpStatus.OK).json({
+      statusCode: HttpStatus.OK,
+      message: 'تسک ها با موفقیت دریافت شد',
+      data: {
+        tasks,
+        pagination: createPagination(page, limit, count, 'Tasks'),
+      },
+    });
   }
 
   @Get(':id')
