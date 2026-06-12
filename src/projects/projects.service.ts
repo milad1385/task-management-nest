@@ -51,8 +51,24 @@ export class ProjectsService {
     return project;
   }
 
-  update(id: number, updateProjectDto: UpdateProjectDto) {
-    return `This action updates a #${id} project`;
+  async update(
+    id: number,
+    updateProjectDto: UpdateProjectDto,
+  ): Promise<Project> {
+    const project = await this.projectRepository.findOne({ where: { id } });
+    if (!project) {
+      throw new NotFoundException('پروژه ای با این آیدی یافت نشد');
+    }
+
+    const updatedProject = await this.projectRepository.update(
+      id,
+      updateProjectDto,
+    );
+    if (updatedProject.affected === 0) {
+      throw new BadRequestException('هنگام حذف پروژه مشکلی به وجود آمد');
+    }
+
+    return await this.findOne({ id });
   }
 
   async remove({ id }: GetIdProjectDto): Promise<Project> {
