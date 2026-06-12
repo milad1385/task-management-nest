@@ -13,10 +13,14 @@ import {
 } from '@nestjs/common';
 import { ProjectsService } from './projects.service';
 import { CreateProjectDto } from './dto/create-project.dto';
-import { UpdateProjectDto } from './dto/update-project.dto';
+import {
+  UpdateProjectDto,
+  UpdateProjectStatusDto,
+} from './dto/update-project.dto';
 import type { Response } from 'express';
 import { GetIdProjectDto, GetProjectQueryDto } from './dto/get-projects.dto';
 import { createPagination } from 'src/utils/func';
+import { ProjectStatusEnum } from './enums/projectStatusEnums';
 
 @Controller('projects')
 export class ProjectsController {
@@ -77,6 +81,24 @@ export class ProjectsController {
     return res.status(HttpStatus.OK).json({
       statusCode: HttpStatus.OK,
       message: 'پروژه با موفقیت آپدیت شد',
+      data: updatedProject,
+    });
+  }
+
+  @Patch(':id')
+  async changeStatus(
+    @Res() res: Response,
+    @Param() param: GetIdProjectDto,
+    @Body() projectStatus: UpdateProjectStatusDto,
+  ) {
+    const { id } = param;
+    const updatedProject = await this.projectsService.changeStatus(
+      id,
+      projectStatus,
+    );
+    return res.status(HttpStatus.OK).json({
+      statusCode: HttpStatus.OK,
+      message: 'پروژه با موفقیت وضعیتش عوض شد',
       data: updatedProject,
     });
   }
