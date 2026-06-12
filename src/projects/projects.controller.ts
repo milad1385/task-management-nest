@@ -1,26 +1,25 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
+  Controller,
   Delete,
-  Res,
+  Get,
   HttpStatus,
-  Query,
+  Param,
+  Patch,
+  Post,
   Put,
+  Query,
+  Res,
 } from '@nestjs/common';
-import { ProjectsService } from './projects.service';
+import type { Response } from 'express';
+import { createPagination } from 'src/utils/func';
 import { CreateProjectDto } from './dto/create-project.dto';
+import { GetIdProjectDto, GetProjectQueryDto } from './dto/get-projects.dto';
 import {
   UpdateProjectDto,
   UpdateProjectStatusDto,
 } from './dto/update-project.dto';
-import type { Response } from 'express';
-import { GetIdProjectDto, GetProjectQueryDto } from './dto/get-projects.dto';
-import { createPagination } from 'src/utils/func';
-import { ProjectStatusEnum } from './enums/projectStatusEnums';
+import { ProjectsService } from './projects.service';
 
 @Controller('projects')
 export class ProjectsController {
