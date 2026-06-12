@@ -8,7 +8,7 @@ import { UpdateProjectDto } from './dto/update-project.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Project } from './entities/project.entity';
 import { Repository } from 'typeorm';
-import { GetOneProjectDto, GetProjectQueryDto } from './dto/get-projects.dto';
+import { GetIdProjectDto, GetProjectQueryDto } from './dto/get-projects.dto';
 
 @Injectable()
 export class ProjectsService {
@@ -43,7 +43,7 @@ export class ProjectsService {
     }
   }
 
-  async findOne({ id }: GetOneProjectDto): Promise<Project> {
+  async findOne({ id }: GetIdProjectDto): Promise<Project> {
     const project = await this.projectRepository.findOne({ where: { id } });
     if (!project) {
       throw new NotFoundException('پروژه ای با این آیدی یافت نشد');
@@ -55,7 +55,15 @@ export class ProjectsService {
     return `This action updates a #${id} project`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} project`;
+  async remove({ id }: GetIdProjectDto): Promise<Project> {
+    const project = await this.projectRepository.findOne({ where: { id } });
+    if (!project) {
+      throw new NotFoundException('پروژه ای با این آیدی یافت نشد');
+    }
+    const deletedProject = await this.projectRepository.delete(id);
+    if (deletedProject.affected === 0) {
+      throw new BadRequestException('هنگام حذف پروژه مشکلی به وجود آمد');
+    }
+    return project;
   }
 }
