@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Task } from './entities/task.entity';
 import { Repository } from 'typeorm';
 import { Project } from 'src/projects/entities/project.entity';
+import { GetTaskStatusDto } from './dto/get-task.dto';
 
 @Injectable()
 export class TasksService {
@@ -31,8 +32,31 @@ export class TasksService {
     }
   }
 
-  findAll() {
-    return `This action returns all tasks`;
+  async findAll({
+    page,
+    limit,
+    status,
+  }: GetTaskStatusDto): Promise<{ tasks: Task[]; count: number }> {
+    try {
+      let where: any = {};
+      if (status) {
+        where.status = status;
+      }
+
+      const count = await this.taskRepository.count({ where });
+      const tasks = await this.taskRepository.find({
+        where,
+        skip: (page - 1) * limit,
+        take: limit,
+        relations: { project: true },
+      });
+
+      return { tasks, count };
+    } catch (error) {
+      throw new BadRequestException(
+        'در هنگام دریافت تسک ها با مشکل رو به رو شد',
+      );
+    }
   }
 
   findOne(id: number) {
