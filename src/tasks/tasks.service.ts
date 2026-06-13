@@ -79,7 +79,15 @@ export class TasksService {
     return `This action updates a #${id} task`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} task`;
+  async remove(id: number) {
+     const task = await this.taskRepository.findOne({ where: { id } });
+    if (!task) {
+      throw new NotFoundException('تسکی با این آیدی یافت نشد');
+    }
+    const deletedTask = await this.taskRepository.delete(id);
+    if (deletedTask.affected === 0) {
+      throw new BadRequestException('هنگام حذف تسک مشکلی به وجود آمد');
+    }
+    return task;
   }
 }
