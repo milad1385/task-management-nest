@@ -14,7 +14,7 @@ import { TasksService } from './tasks.service';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import type { Response } from 'express';
-import { GetTaskStatusDto } from './dto/get-task.dto';
+import { GetTaskIdDto, GetTaskStatusDto } from './dto/get-task.dto';
 import { createPagination } from 'src/utils/func';
 
 @Controller('tasks')
@@ -46,8 +46,14 @@ export class TasksController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.tasksService.findOne(+id);
+  async findOne(@Res() res: Response, @Param() param: GetTaskIdDto) {
+    const { id } = param;
+    const task = await this.tasksService.findOne(id);
+    return res.status(HttpStatus.OK).json({
+      statusCode: HttpStatus.OK,
+      message: 'تسک با موفقیت دریافت شد',
+      data: task,
+    });
   }
 
   @Patch(':id')
