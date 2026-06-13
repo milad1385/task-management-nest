@@ -75,9 +75,25 @@ export class TasksService {
 
     return task;
   }
-  update(id: number, updateTaskDto: UpdateTaskDto) {
-    return `This action updates a #${id} task`;
-  }
+ async update(
+     id: number,
+     updateTaskDto: UpdateTaskDto,
+   ): Promise<Task> {
+     const task = await this.taskRepository.findOne({ where: { id } });
+     if (!task) {
+       throw new NotFoundException('تسکی با این آیدی یافت نشد');
+     }
+ 
+     const updatedTask = await this.taskRepository.update(
+       id,
+       updateTaskDto,
+     );
+     if (updatedTask.affected === 0) {
+       throw new BadRequestException('هنگام آپدیت تسک مشکلی به وجود آمد');
+     }
+ 
+     return await this.findOne(id);
+   }
 
   async remove(id: number) {
      const task = await this.taskRepository.findOne({ where: { id } });
