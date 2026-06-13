@@ -9,6 +9,7 @@ import {
   HttpStatus,
   Res,
   Query,
+  Put,
 } from '@nestjs/common';
 import { TasksService } from './tasks.service';
 import { CreateTaskDto } from './dto/create-task.dto';
@@ -56,9 +57,19 @@ export class TasksController {
     });
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateTaskDto: UpdateTaskDto) {
-    return this.tasksService.update(+id, updateTaskDto);
+  @Put(':id')
+  async update(
+    @Res() res: Response,
+    @Param() param: GetTaskIdDto,
+    @Body() updateTaskDto: UpdateTaskDto,
+  ) {
+    const { id } = param;
+    const updatedTask = await this.tasksService.update(id, updateTaskDto);
+    return res.status(HttpStatus.OK).json({
+      statusCode: HttpStatus.OK,
+      message: 'تسک با موفقیت آپدیت شد',
+      data: updatedTask,
+    });
   }
 
   @Delete(':id')
