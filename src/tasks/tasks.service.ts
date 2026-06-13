@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -59,10 +63,18 @@ export class TasksService {
     }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} task`;
-  }
+  async findOne(id: number): Promise<Task> {
+    const task = await this.taskRepository.findOne({
+      where: { id },
+      relations: { project: true },
+    });
 
+    if (!task) {
+      throw new NotFoundException('تسکی با این آیدی پیدا نشد');
+    }
+
+    return task;
+  }
   update(id: number, updateTaskDto: UpdateTaskDto) {
     return `This action updates a #${id} task`;
   }
