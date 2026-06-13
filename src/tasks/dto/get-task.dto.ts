@@ -1,4 +1,12 @@
-import { IsEnum, IsInt, IsNumber, IsOptional, IsPositive, Max, Min } from 'class-validator';
+import {
+  IsEnum,
+  IsInt,
+  IsNumber,
+  IsOptional,
+  IsPositive,
+  Max,
+  Min,
+} from 'class-validator';
 import { TaskStatusEnum } from '../enums/taskStatusEnums';
 import { Type } from 'class-transformer';
 
@@ -20,7 +28,7 @@ export class GetTaskStatusDto {
   @Max(100, { message: 'حداکثر تعداد آیتم در هر صفحه 100 است' })
   limit: number = 10;
   @IsEnum(TaskStatusEnum, {
-    message: 'وضعیت باید یا doing باشد یا cancel ',
+    message: 'وضعیت باید done , doing , cancel باشد',
   })
   @IsOptional()
   status: TaskStatusEnum;
