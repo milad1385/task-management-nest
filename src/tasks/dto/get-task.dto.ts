@@ -25,3 +25,12 @@ export class GetTaskStatusDto {
   @IsOptional()
   status: TaskStatusEnum;
 }
+
+export class GetTaskIdDto {
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt({ message: 'شماره صفحه باید عدد صحیح باشد' })
+  @IsPositive({ message: 'شماره پروژه باید بزرگتر از 0 باشد' })
+  @IsNumber({}, { message: 'شماره پروژه باید عدد باشد' })
+  id: number;
+}
