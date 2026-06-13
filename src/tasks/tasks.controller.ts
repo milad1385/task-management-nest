@@ -62,7 +62,13 @@ export class TasksController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.tasksService.remove(+id);
+  async remove(@Res() res: Response, @Param() param: GetTaskIdDto) {
+    const { id } = param;
+    const deletedTask = await this.tasksService.remove(id);
+    return res.status(HttpStatus.OK).json({
+      statusCode: HttpStatus.OK,
+      message: 'پروژه با موفقیت حذف شد',
+      data: deletedTask,
+    });
   }
 }
