@@ -13,7 +13,7 @@ import {
 } from '@nestjs/common';
 import { TasksService } from './tasks.service';
 import { CreateTaskDto } from './dto/create-task.dto';
-import { UpdateTaskDto } from './dto/update-task.dto';
+import { UpdateTaskDto, UpdateTaskStatusDto } from './dto/update-task.dto';
 import type { Response } from 'express';
 import { GetTaskIdDto, GetTaskStatusDto } from './dto/get-task.dto';
 import { createPagination } from 'src/utils/func';
@@ -72,6 +72,20 @@ export class TasksController {
     });
   }
 
+  @Put(':id') 
+  async changeStatus(
+    @Res() res: Response,
+    @Param() param: GetTaskIdDto,
+    @Body() updateTaskDto: UpdateTaskStatusDto,
+  ) {
+    const { id } = param;
+    const updatedTask = await this.tasksService.changeStatus(id, updateTaskDto);
+    return res.status(HttpStatus.OK).json({
+      statusCode: HttpStatus.OK,
+      message: 'تسک با موفقیت آپدیت شد',
+      data: updatedTask,
+    });
+  }
   @Delete(':id')
   async remove(@Res() res: Response, @Param() param: GetTaskIdDto) {
     const { id } = param;
