@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { CreateTaskDto } from './dto/create-task.dto';
-import { UpdateTaskDto } from './dto/update-task.dto';
+import { UpdateTaskDto, UpdateTaskStatusDto } from './dto/update-task.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Task } from './entities/task.entity';
 import { Repository } from 'typeorm';
@@ -75,28 +75,42 @@ export class TasksService {
 
     return task;
   }
- async update(
-     id: number,
-     updateTaskDto: UpdateTaskDto,
-   ): Promise<Task> {
-     const task = await this.taskRepository.findOne({ where: { id } });
-     if (!task) {
-       throw new NotFoundException('تسکی با این آیدی یافت نشد');
-     }
- 
-     const updatedTask = await this.taskRepository.update(
-       id,
-       updateTaskDto,
-     );
-     if (updatedTask.affected === 0) {
-       throw new BadRequestException('هنگام آپدیت تسک مشکلی به وجود آمد');
-     }
- 
-     return await this.findOne(id);
-   }
+  async update(id: number, updateTaskDto: UpdateTaskDto): Promise<Task> {
+    const task = await this.taskRepository.findOne({ where: { id } });
+    if (!task) {
+      throw new NotFoundException('تسکی با این آیدی یافت نشد');
+    }
+
+    const updatedTask = await this.taskRepository.update(id, updateTaskDto);
+    if (updatedTask.affected === 0) {
+      throw new BadRequestException('هنگام آپدیت تسک مشکلی به وجود آمد');
+    }
+
+    return await this.findOne(id);
+  }
+
+  async changeStatus(id: number, updateTaskStatusDto: UpdateTaskStatusDto) {
+    const task = await this.taskRepository.findOne({ where: { id } });
+    if (!task) {
+      throw new NotFoundException('تسکی با این آیدی جهت تغییر وضعیت پیدا نشد');
+    }
+
+    const updatedTask = await this.taskRepository.update(
+      id,
+      updateTaskStatusDto,
+    );
+
+    if (updatedTask.affected === 0) {
+      throw new BadRequestException(
+        'در زمان تغییر وضعیت تسک مشکلی به وجود آمد',
+      );
+    }
+
+    return await this.findOne(id);
+  }
 
   async remove(id: number) {
-     const task = await this.taskRepository.findOne({ where: { id } });
+    const task = await this.taskRepository.findOne({ where: { id } });
     if (!task) {
       throw new NotFoundException('تسکی با این آیدی یافت نشد');
     }
