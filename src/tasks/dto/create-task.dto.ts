@@ -25,7 +25,7 @@ export class CreateTaskDto {
   description: string;
 
   @IsEnum(TaskStatusEnum, {
-    message: 'وضعیت باید یا doing باشد یا cancel ',
+    message: 'وضعیت باید done , doing , cancel باشد',
   })
   @IsOptional()
   status: TaskStatusEnum;
