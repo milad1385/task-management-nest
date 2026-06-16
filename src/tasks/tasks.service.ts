@@ -89,7 +89,10 @@ export class TasksService {
     return await this.findOne(id);
   }
 
-  async changeStatus(id: number, updateTaskStatusDto: UpdateTaskStatusDto) {
+  async changeStatus(
+    id: number,
+    updateTaskStatusDto: UpdateTaskStatusDto,
+  ): Promise<Task> {
     const task = await this.taskRepository.findOne({ where: { id } });
     if (!task) {
       throw new NotFoundException('تسکی با این آیدی جهت تغییر وضعیت پیدا نشد');

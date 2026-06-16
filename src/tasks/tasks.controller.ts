@@ -72,7 +72,7 @@ export class TasksController {
     });
   }
 
-  @Put(':id') 
+  @Put(':id')
   async changeStatus(
     @Res() res: Response,
     @Param() param: GetTaskIdDto,
@@ -82,7 +82,7 @@ export class TasksController {
     const updatedTask = await this.tasksService.changeStatus(id, updateTaskDto);
     return res.status(HttpStatus.OK).json({
       statusCode: HttpStatus.OK,
-      message: 'تسک با موفقیت آپدیت شد',
+      message: 'تسک با موفقیت وضعیتش تغییر کرد',
       data: updatedTask,
     });
   }
